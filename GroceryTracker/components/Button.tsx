@@ -1,9 +1,9 @@
-import { StyleSheet, View, Pressable, Text } from 'react-native';
+import { StyleSheet, View, Pressable, Text, TouchableOpacity } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 
 type Props = {
   label: string;
-  theme?: 'primary';
+  theme?: 'primary' | 'add' | 'remove' | 'removeItem';
   onPress?: () => void;
 };
 
@@ -22,6 +22,33 @@ export default function Button({ label, theme, onPress }: Props) {
         </Pressable>
       </View>
     );
+  }
+  else if (theme === 'add') {
+    return (
+      <TouchableOpacity style={styles.addButton} onPress={onPress}>
+        <View style={styles.addButtonInner}>
+          <Text style={styles.addButtonLabel}>+</Text>
+        </View>
+      </TouchableOpacity>
+    );
+  }
+  else if (theme === 'remove') {
+    return (
+      <TouchableOpacity style={styles.addButton} onPress={onPress}>
+        <View style={styles.addButtonInner}>
+          <Text style={styles.addButtonLabel}>-</Text>
+        </View>
+      </TouchableOpacity>
+    );
+  }
+  else if (theme === 'removeItem') {
+    return (
+      <TouchableOpacity style={styles.removeItemButton} onPress={onPress}>
+        <View style={styles.addButtonInner}>
+          <Text style={styles.addButtonLabel}>x</Text>
+        </View>
+      </TouchableOpacity>
+    )
   }
 
   return (
@@ -56,5 +83,41 @@ const styles = StyleSheet.create({
   buttonLabel: {
     color: '#fff',
     fontSize: 16,
+  },
+  addButton: {
+    backgroundColor: '#2196F3', // Example color
+    borderRadius: 50,
+    padding: 10,
+    elevation: 2, // For Android shadow
+    shadowColor: '#000', // For iOS shadow
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    width: 50,   
+
+    shadowRadius: 3.84,
+  },
+  addButtonInner: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  addButtonLabel: {
+    fontSize: 24,
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  removeItemButton: {
+    backgroundColor: 'red', // Example color
+    borderRadius: 6,
+    padding: 0,
+    margin: 0,
+    textAlign: 'center',
+    elevation: 2, // For Android shadow
+    shadowColor: '#000', // For iOS shadow
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    width: 18,
+    height: 18,
+
+    shadowRadius: 3.84,
   },
 });
