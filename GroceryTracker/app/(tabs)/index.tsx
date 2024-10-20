@@ -8,6 +8,8 @@ import * as FileSystem from 'expo-file-system';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useState, useEffect } from 'react';
+import { useFocusEffect} from '@react-navigation/native';
+import React from 'react';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -22,13 +24,19 @@ export default function Index({}) {
 
   let nextId = groceryList.length==0 ? 0 : Math.max(...groceryList.map((item) => item.id)) + 1;
 
-  useEffect(() => {
-    loadList();
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      loadList();
+    }, [])
+);
 
   useEffect(() => {
     saveList();
   }, [groceryList]);
+
+  useEffect(() => {
+    sendImage().then(() => runScript0());
+  }, [selectedImage]);
 
   // useEffect(() => {
   //   runScript0();
@@ -81,20 +89,11 @@ export default function Index({}) {
         let x = response.data.split("{")[1].split("}")[0]
         for (const line of x.split(",")) {
           let y = line.split(":");
-          AddToList(y[0], parseInt(y[1]));
+          AddToList(y[0].replace(/['"]+/g, ''), parseInt(y[1]));
         }
       } catch (error) {
         console.error(error);
       }
-    }
-  };
-
-  const runScript1 = async () => {
-    try {
-      const url = 'http://192.168.212.103:5000/' + `generate_recipe/eggs,milk,cheese`;
-      const response = await axios.get(url);
-    } catch (error) {
-      console.error(error);
     }
   };
 
@@ -194,8 +193,8 @@ export default function Index({}) {
       <ThemedView style={styles.titleContainer}>
         <ThemedText type="title">Scan your receipt!</ThemedText>
       </ThemedView>
-        <Button theme="primary" label="Take a photo" onPress={() => takeImageAsync().then(() => sendImage().then(() => runScript0()))} />
-        <Button theme="primary" label="Choose a photo" onPress={() => pickImageAsync().then(() => sendImage().then(() => runScript0()))} />
+        <Button theme="primary" label="Take a photo" onPress={takeImageAsync} />
+        <Button theme="primary" label="Choose a photo" onPress={pickImageAsync} />
       </View>
     </View>
   );

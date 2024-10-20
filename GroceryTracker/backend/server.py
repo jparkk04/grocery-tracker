@@ -29,8 +29,9 @@ def upload_image():
         return jsonify({'error', str(e)}), 500
 
 
-@app.route('/generate_recipe/<s>', methods=['GET'])
-def script0(s):
+@app.route('/generate_recipe', methods=['GET'])
+def script0():
+    s = request.args.get('s')
     print("generating recipes...")
     result = generate_recipe(s)
     return result
