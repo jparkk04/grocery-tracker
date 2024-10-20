@@ -40,7 +40,7 @@ export default function GroceryList() {
     saveList();
   }, [groceryList]);
   
-  let nextId = Math.max(...groceryList.map((item) => item.id)) + 1;
+  let nextId = groceryList.length==0 ? 0 : Math.max(...groceryList.map((item) => item.id)) + 1;
 
   const AddToList = (item: string, days: number) => {
     if (item && days) {
@@ -88,9 +88,12 @@ export default function GroceryList() {
           return(
             <View style={styles.listItem} key={item.id}>
               <Text>{item.name}</Text>
-              {removeMode ?
-                <Button theme={'removeItem'} label="RemoveItem" onPress={() => RemoveFromList(item.id)}/> : null}
-              <Text style={styles.expiration}>{item.days}</Text>
+              <View style={[{position: 'absolute', right: 8, flexDirection: 'row'}]}>
+                {removeMode ?
+                  <Button theme={'removeItem'} label="RemoveItem" onPress={() => RemoveFromList(item.id)}/> : null
+                }
+                <Text style={[{marginLeft: 12}]}>{item.days}</Text>
+              </View>
             </View>
           )
         }

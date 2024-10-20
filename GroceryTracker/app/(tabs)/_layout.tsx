@@ -30,7 +30,16 @@ export default function TabLayout() {
         options={{
           title: 'Grocery List',
           tabBarIcon: ({ color, focused }) => (
-            <Ionicons name={focused ? 'information-circle' : 'information-circle-outline'} color={color} size={24}/>
+            <Ionicons name={focused ? 'list' : 'list'} color={color} size={24}/>
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="recipes"
+        options={{
+          title: 'Create Recipes',
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons name={focused ? 'create-outline' : 'create-outline'} color={color} size={24}/>
           ),
         }}
       />

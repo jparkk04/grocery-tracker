@@ -3,7 +3,7 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 
 type Props = {
   label: string;
-  theme?: 'primary' | 'add' | 'remove' | 'removeItem';
+  theme?: 'primary' | 'add' | 'remove' | 'removeItem' | 'createRecipe';
   onPress?: () => void;
 };
 
@@ -25,29 +25,53 @@ export default function Button({ label, theme, onPress }: Props) {
   }
   else if (theme === 'add') {
     return (
-      <TouchableOpacity style={styles.addButton} onPress={onPress}>
-        <View style={styles.addButtonInner}>
-          <Text style={styles.addButtonLabel}>+</Text>
-        </View>
-      </TouchableOpacity>
+      <View
+        style={[
+          { height: 48, width: 156, },
+        ]}>
+        <Pressable
+          style={[styles.button, { backgroundColor: '#2196F3' }]} onPress={onPress}>
+          <FontAwesome name="plus" size={12} color="white" style={styles.buttonIcon} />
+          <Text style={[styles.buttonLabel, { color: 'white' }]}>Add Items</Text>
+        </Pressable>
+      </View>
     );
   }
   else if (theme === 'remove') {
     return (
-      <TouchableOpacity style={styles.addButton} onPress={onPress}>
-        <View style={styles.addButtonInner}>
-          <Text style={styles.addButtonLabel}>-</Text>
-        </View>
-      </TouchableOpacity>
+      <View
+        style={[
+          { height: 48, width: 156, },
+        ]}>
+        <Pressable
+          style={[styles.button, { backgroundColor: '#2196F3' }]} onPress={onPress}>
+          <FontAwesome name="remove" size={12} color="white" style={styles.buttonIcon} />
+          <Text style={[styles.buttonLabel, { color: 'white' }]}>Remove Items</Text>
+        </Pressable>
+      </View>
     );
   }
   else if (theme === 'removeItem') {
     return (
-      <TouchableOpacity style={styles.removeItemButton} onPress={onPress}>
-        <View style={styles.addButtonInner}>
-          <Text style={styles.addButtonLabel}>x</Text>
-        </View>
-      </TouchableOpacity>
+      <Pressable
+        style={[{ backgroundColor: 'red', height:18, width:18, borderRadius:8}]} onPress={onPress}>
+        <FontAwesome name="remove" size={12} color="white" style={[{ justifyContent: 'center', left: 4, top: 3}]} />
+      </Pressable>
+    )
+  }
+  else if (theme === 'createRecipe') {
+    return (
+      <View
+        style={[
+          styles.buttonContainer,
+          { borderWidth: 3, borderColor: '#1aac00', borderRadius: 18 },
+        ]}>
+        <Pressable
+          style={[styles.button, { backgroundColor: '#fff' }]} onPress={onPress}>
+          <FontAwesome name="plus" size={18} color="#25292e" style={styles.buttonIcon} />
+          <Text style={[styles.buttonLabel, { color: '#25292e' }]}>{label}</Text>
+        </Pressable>
+      </View>
     )
   }
 
