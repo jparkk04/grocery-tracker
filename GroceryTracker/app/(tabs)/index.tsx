@@ -29,6 +29,7 @@ export default function Index({}) {
     saveList();
   }, [groceryList]);
 
+
   useEffect(() => {
     runScript0();
   },[]);
@@ -59,6 +60,7 @@ export default function Index({}) {
         AddToList(y[0], parseInt(y[1]));
       }
       console.log("GroceryList", groceryList);
+      saveList();
     } catch (error) {
       console.error(error);
     }

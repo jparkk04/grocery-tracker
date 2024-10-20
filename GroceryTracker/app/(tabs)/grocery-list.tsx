@@ -2,13 +2,15 @@ import { Text, View, StyleSheet, TextInput, Pressable, ScrollView } from "react-
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Button from '@/components/Button';
 import { useState, useEffect } from "react";
+import { useFocusEffect } from '@react-navigation/native';
+import React from 'react'
 
 export default function GroceryList() {
   const [addMode, setAddMode] = useState(false);
   const [removeMode, setRemoveMode] = useState(false);
   const [groceryList, setGroceryList] = useState(
     []
-  )
+  );
 
   const saveList = async () => {
     try {
@@ -33,9 +35,11 @@ export default function GroceryList() {
       console.error('Error loading list:', error);
     }
   };
-  useEffect(() => {
-    loadList();
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      loadList();
+    }, [])
+  );
   useEffect(() => {
     saveList();
   }, [groceryList]);

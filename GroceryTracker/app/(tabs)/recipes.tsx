@@ -2,6 +2,8 @@ import { View, Text, ScrollView, StyleSheet } from 'react-native'
 import Button from '@/components/Button';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useState }from 'react'
+import { useFocusEffect } from '@react-navigation/native';
+import React from 'react'
 
 export default function Recipes() {
     let groceryList = []
@@ -23,7 +25,12 @@ export default function Recipes() {
         }
     };
 
-    loadList();
+    useFocusEffect(
+        React.useCallback(() => {
+          loadList();
+        }, [])
+    );
+    
     let nextId = recipes.length==0 ? 0 : Math.max(...recipes.map((item) => item.id)) + 1;
 
     const getRecipe = () => {
