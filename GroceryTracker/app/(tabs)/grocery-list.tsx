@@ -53,6 +53,10 @@ export default function GroceryList() {
     }
   }
 
+  const RemoveAll = () => {
+    setGroceryList([]);
+  }
+
   const AddItemSection = () => {
     const [item, onChangeItem] = useState('');
     const [days, onChangeDays] = useState('');
@@ -80,6 +84,14 @@ export default function GroceryList() {
           <Button theme="add" label="Add Item" onPress={() => setAddMode(!addMode)}/>
           <Button theme="remove" label="Add Item" onPress={() => setRemoveMode(!removeMode)}/>
         </View>
+        {removeMode ?
+          <View style={[{alignItems:'flex-end'}]}>
+            <View style={[{marginRight: 12, marginBottom: 12}]}>
+              <Button theme="removeAll" label="Remove All" onPress={RemoveAll}/>
+            </View>
+          </View>
+          : null
+        }
         <View>
           {addMode ? 
             <AddItemSection /> : null}
