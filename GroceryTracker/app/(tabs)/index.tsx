@@ -4,6 +4,7 @@ import { Link } from "expo-router";
 import Button from '@/components/Button';
 import ImageViewer from '@/components/ImageViewer';
 import * as ImagePicker from 'expo-image-picker';
+import * as FileSystem from 'expo-file-system';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useState, useEffect } from 'react';
@@ -11,9 +12,9 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Index({}) {
-  const [selectedImage, setSelectedImage] = useState<{} | undefined>(undefined);
-  const [output, setOutput] = useState('');
-  let i = 1;
+  const [selectedImage, setSelectedImage] = useState<String | undefined>(undefined);
+  // const [output, setOutput] = useState('');
+  // let i = 1;
 
   const [groceryList, setGroceryList] = useState(
     []
@@ -29,19 +30,41 @@ export default function Index({}) {
     saveList();
   }, [groceryList]);
 
+  // useEffect(() => {
+  //   runScript0();
+  // }, [selectedImage]);
 
-  useEffect(() => {
-    runScript0();
-  },[]);
-  useEffect(() => {
-    runScript1();
-  },[]);
+  const sendImage = async () => {
+    if (selectedImage) {
+      try {
+        
+        const base64 = await FileSystem.readAsStringAsync(selectedImage, { encoding: 'base64' });
+        const response = await fetch('http://192.168.212.103:5000/upload', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ image: base64 })
+        });
+
+        if (response.ok) {
+          // Handle successful upload
+          console.log('Image uploaded successfully!');
+        } else {
+          // Handle upload error
+          console.error('Image upload failed.');
+        }
+      } catch (error) {
+        console.error('Error sending image:', error);
+      }
+    }
+  }
 
   const AddToList = (item: string, days: number) => {
     if (item && days) {
       setGroceryList(groceryList => 
         {const newList = [...groceryList, { name: item, days: days, id: nextId }];
-        console.log("newList:" + newList); // Log the new list
+        // console.log("newList:" + newList); // Log the new list
         return newList;}
       );
       nextId += 1;
@@ -49,28 +72,27 @@ export default function Index({}) {
   }
 
   const runScript0 = async () => {
-    try {
-      const url = 'http://192.168.212.103:5000/' + `food_expiration/receipt${i}.jpg`;
-      const response = await axios.get(url);
-      // setOutput(response.data);
-      // console.log(response.data);
-      let x = response.data.split("{")[1].split("}")[0]
-      for (const line of x.split(",")) {
-        let y = line.split(":");
-        AddToList(y[0], parseInt(y[1]));
+    if (selectedImage) {
+      try {
+        const url = 'http://192.168.212.103:5000/' + `food_expiration/image.jpg`;
+        const response = await axios.get(url);
+        // setOutput(response.data);
+        // console.log(response.data);
+        let x = response.data.split("{")[1].split("}")[0]
+        for (const line of x.split(",")) {
+          let y = line.split(":");
+          AddToList(y[0], parseInt(y[1]));
+        }
+      } catch (error) {
+        console.error(error);
       }
-      console.log("GroceryList", groceryList);
-      saveList();
-    } catch (error) {
-      console.error(error);
     }
   };
 
   const runScript1 = async () => {
     try {
-      const url = 'http://192.168.212.103:5000/' + `generate_recipe/${output}`;
+      const url = 'http://192.168.212.103:5000/' + `generate_recipe/eggs,milk,cheese`;
       const response = await axios.get(url);
-      setOutput(response.data);
     } catch (error) {
       console.error(error);
     }
@@ -124,6 +146,24 @@ export default function Index({}) {
   //   }
   // };
 
+  // const uploadImageAsync = async () => {
+  //   let formData = new FormData(); 
+  //   //append created photo{} to formdata
+  //   formData.append('image', selectedImage);
+  //   //use axios to POST
+  //   axios({
+  //       method: 'POST',
+  //       url: api_url +  'customer/upload-avatar',
+  //       data: formData,
+  //       headers: {
+  //           'Authorization': "Bearer  "  +  YOUR_BEARER_TOKEN,
+  //           'Accept': 'application/json',
+  //           'Content-Type': 'multipart/form-data;'    
+  //       }}) .then(function (response) { console.log(response)})
+  //       .catch(function (error) { console.log(error.response)
+  //   });
+  // }
+
   const takeImageAsync = async () => {
     let result = await ImagePicker.launchCameraAsync({
       allowsEditing: true,
@@ -132,8 +172,8 @@ export default function Index({}) {
     });
 
     if (!result.canceled) {
-      {setSelectedImage(result.assets[0].uri);
-      runScript0();}
+      setSelectedImage(result.assets[0].uri);
+      console.log(selectedImage);
     }
   };
   const pickImageAsync = async () => {
@@ -143,8 +183,8 @@ export default function Index({}) {
     });
 
     if (!result.canceled) {
-      {setSelectedImage(result.assets[0].uri);
-      runScript0();}
+      setSelectedImage(result.assets[0].uri);
+      console.log(selectedImage);
     }
   };
   
@@ -154,8 +194,8 @@ export default function Index({}) {
       <ThemedView style={styles.titleContainer}>
         <ThemedText type="title">Scan your receipt!</ThemedText>
       </ThemedView>
-        <Button theme="primary" label="Take a photo" onPress={takeImageAsync} />
-        <Button theme="primary" label="Choose a photo" onPress={pickImageAsync} />
+        <Button theme="primary" label="Take a photo" onPress={() => takeImageAsync().then(() => sendImage().then(() => runScript0()))} />
+        <Button theme="primary" label="Choose a photo" onPress={() => pickImageAsync().then(() => sendImage().then(() => runScript0()))} />
       </View>
     </View>
   );

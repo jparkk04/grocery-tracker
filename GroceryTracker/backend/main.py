@@ -7,13 +7,13 @@ from vertexai.generative_models import (
     GenerativeModel,
     Tool,
     grounding,
+    Part,
 )
 
 def food_expiration(image_file):
     genai.configure(api_key=os.environ["API_KEY"])
-
-    myfile = genai.upload_file("C:\\Users\\noahm\\OneDrive\\Desktop\\Calhacks\\GroceryTrackerRepo\\grocery-tracker\\GroceryTracker\\backend\\images\\" + image_file)
-
+    myfile = genai.upload_file("C:\\Users\\noahm\\OneDrive\\Desktop\\Calhacks\\GroceryTrackerRepo\\grocery-tracker\\GroceryTracker\\" + image_file, mime_type='image/jpeg')
+    
     model = genai.GenerativeModel("gemini-1.5-flash")
     result = model.generate_content(
         [myfile, "\n\n", "Identify the food items from the text of this grocery receipt. If adjectives come after the food items, write the food items with the adjectives in front. If there are abbreviations to food items, write the full name of the food item. Return a list of the food items."]
@@ -25,10 +25,16 @@ def food_expiration(image_file):
 
     PROJECT_ID = "winter-inquiry-439119-v8"
     vertexai.init(project=PROJECT_ID, location="us-central1")
+    model = GenerativeModel("gemini-1.5-flash-001")
+
+    # image_file = Part.from_uri(
+    #     image_file, mime_type
+    # )   
+    # result = model.generate_content(
+    #     [image_file, "Identify the food items from the text of this grocery receipt. If adjectives come after the food items, write the food items with the adjectives in front. If there are abbreviations to food items, write the full name of the food item. Return a list of the food items."]
+    # )
 
     tool = Tool.from_google_search_retrieval(grounding.GoogleSearchRetrieval())
-
-    model = GenerativeModel("gemini-1.5-flash-001")
 
     prompt1 = ("Make a list of the estimated shelf life for each food item, making sure that the shelf life " + 
                "is a single number representing the average number of days, for the following food items. Return " + 
