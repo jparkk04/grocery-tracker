@@ -8,17 +8,57 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function Index() {
+export default function Index({}) {
   const [selectedImage, setSelectedImage] = useState<string | undefined>(undefined);
   const [output, setOutput] = useState('');
   let i = 1;
+
+  const [groceryList, setGroceryList] = useState(
+    []
+  )
+
+  let nextId = groceryList.length==0 ? 0 : Math.max(...groceryList.map((item) => item.id)) + 1;
+
+  useEffect(() => {
+    loadList();
+  }, []);
+
+  useEffect(() => {
+    saveList();
+  }, [groceryList]);
+
+  useEffect(() => {
+    runScript0();
+  },[]);
+  useEffect(() => {
+    runScript1();
+  },[]);
+
+  const AddToList = (item: string, days: number) => {
+    if (item && days) {
+      setGroceryList(groceryList => 
+        {const newList = [...groceryList, { name: item, days: days, id: nextId }];
+        console.log("newList:" + newList); // Log the new list
+        return newList;}
+      );
+      nextId += 1;
+    }
+  }
 
   const runScript0 = async () => {
     try {
       const url = 'http://192.168.212.103:5000/' + `food_expiration/receipt${i}.jpg`;
       const response = await axios.get(url);
-      setOutput(response.data);
+      // setOutput(response.data);
+      // console.log(response.data);
+      let x = response.data.split("{")[1].split("}")[0]
+      for (const line of x.split(",")) {
+        let y = line.split(":");
+        AddToList(y[0], parseInt(y[1]));
+      }
+      console.log("GroceryList", groceryList);
     } catch (error) {
       console.error(error);
     }
@@ -34,9 +74,34 @@ export default function Index() {
     }
   };
 
-  useEffect(() => {
-    runScript0();
-  },[]);
+  
+
+  const saveList = async () => {
+    try {
+      const jsonList = JSON.stringify(groceryList);
+      await AsyncStorage.setItem('groceryList', jsonList);
+    } catch (error) {
+      console.error('Error saving list:', error);
+    }
+  };
+
+  const loadList = async () => {
+    try {
+      const jsonList = await AsyncStorage.getItem('groceryList');
+      if (jsonList !== null) {
+        const loadedList = JSON.parse(jsonList);
+        setGroceryList(loadedList);
+      }
+      else {
+        setGroceryList([]);
+      }
+    } catch (error) {
+      console.error('Error loading list:', error);
+    }
+  };
+  
+
+  
 
   // const runScript0 = async () => {
   //   try {
@@ -66,8 +131,7 @@ export default function Index() {
 
     if (!result.canceled) {
       {setSelectedImage(result.assets[0].uri);
-      runScript1();
-      console.log(output);}
+      runScript0();}
     }
   };
   const pickImageAsync = async () => {
@@ -78,8 +142,7 @@ export default function Index() {
 
     if (!result.canceled) {
       {setSelectedImage(result.assets[0].uri);
-      runScript0();
-      console.log(output);}
+      runScript0();}
     }
   };
   
