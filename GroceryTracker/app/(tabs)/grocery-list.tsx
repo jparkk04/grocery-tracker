@@ -60,7 +60,7 @@ export default function GroceryList() {
         <TextInput style={styles.textInput} onChangeText={onChangeDays} keyboardType='numeric'/>
         <Pressable style={styles.addItemButton} onPress={() => AddToList(item, parseInt(days))}>
           <Text>Add Item</Text>
-        </Pressable>
+          </Pressable>
       </View>
     )
   }
