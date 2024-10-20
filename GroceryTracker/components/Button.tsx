@@ -3,7 +3,7 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 
 type Props = {
   label: string;
-  theme?: 'primary' | 'add' | 'remove' | 'removeItem' | 'createRecipe';
+  theme?: 'primary' | 'add' | 'remove' | 'removeItem' | 'createRecipe' | 'removeAll';
   onPress?: () => void;
 };
 
@@ -13,12 +13,12 @@ export default function Button({ label, theme, onPress }: Props) {
       <View
         style={[
           styles.buttonContainer,
-          { borderWidth: 3, borderColor: '#1aac00', borderRadius: 18 },
+          { margin: 4 },
         ]}>
         <Pressable
-          style={[styles.button, { backgroundColor: '#fff' }]} onPress={onPress}>
-          <FontAwesome name="picture-o" size={18} color="#25292e" style={styles.buttonIcon} />
-          <Text style={[styles.buttonLabel, { color: '#25292e' }]}>{label}</Text>
+          style={[styles.button, { backgroundColor: '#2196F3' }]} onPress={onPress}>
+          <FontAwesome name="picture-o" size={18} color="white" style={styles.buttonIcon} />
+          <Text style={[styles.buttonLabel, { color: 'white' }]}>{label}</Text>
         </Pressable>
       </View>
     );
@@ -51,6 +51,20 @@ export default function Button({ label, theme, onPress }: Props) {
       </View>
     );
   }
+  else if (theme === 'removeAll') {
+    return (
+      <View
+        style={[
+          { height: 48, width: 156, },
+        ]}>
+        <Pressable
+          style={[styles.button, { backgroundColor: 'red' }]} onPress={onPress}>
+          <FontAwesome name="remove" size={12} color="white" style={styles.buttonIcon} />
+          <Text style={[styles.buttonLabel, { color: 'white' }]}>Remove All</Text>
+        </Pressable>
+      </View>
+    );
+  }
   else if (theme === 'removeItem') {
     return (
       <Pressable
@@ -64,12 +78,12 @@ export default function Button({ label, theme, onPress }: Props) {
       <View
         style={[
           styles.buttonContainer,
-          { borderWidth: 3, borderColor: '#1aac00', borderRadius: 18 },
+          { margin: 4 },
         ]}>
         <Pressable
-          style={[styles.button, { backgroundColor: '#fff' }]} onPress={onPress}>
-          <FontAwesome name="plus" size={18} color="#25292e" style={styles.buttonIcon} />
-          <Text style={[styles.buttonLabel, { color: '#25292e' }]}>{label}</Text>
+          style={[styles.button, { backgroundColor: '#2196F3', alignContent: 'center' }]} onPress={onPress}>
+          <FontAwesome name="plus" size={18} color="white" style={styles.buttonIcon} />
+          <Text style={[styles.buttonLabel, { color: 'white' }]}>{label}</Text>
         </Pressable>
       </View>
     )

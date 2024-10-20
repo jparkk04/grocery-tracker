@@ -8,7 +8,7 @@ import React from 'react'
 export default function Recipes() {
     let groceryList = []
     const [recipes, setRecipes] = useState([{name: "Spaghetti with meatballs", description: "You need pasta, tomato sauce, and meatballs.", id: 0}, 
-    {name: "Cereal and Milk", description: "You cereal and milk. Put some cereal in the bowl then add milk.", id: 1}]);
+    {name: "Cereal and Milk", description: "You need cereal and milk. Put some cereal in the bowl then add milk.", id: 1}]);
 
     const loadList = async () => {
         try {
@@ -30,7 +30,7 @@ export default function Recipes() {
           loadList();
         }, [])
     );
-    
+
     let nextId = recipes.length==0 ? 0 : Math.max(...recipes.map((item) => item.id)) + 1;
 
     const getRecipe = () => {
@@ -44,7 +44,9 @@ export default function Recipes() {
 
     return (
         <ScrollView style={styles.container}>
-            <Button theme="createRecipe" label="Create a Recipe" onPress={getRecipe} />
+            <View style={[{paddingLeft: 10, paddingRight: 10}]}>
+                <Button theme="createRecipe" label="Create a Recipe" onPress={getRecipe} />
+            </View>
             <View style={styles.list}>
                 {recipes.map((item => {
                     return(
